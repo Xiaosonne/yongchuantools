@@ -7,6 +7,7 @@ namespace YongChuanTools
     {
         static void Main(string[] args)
         {
+            // YongChuanTools TCP Server - Fire Protection Equipment Monitoring
             Console.WriteLine("Hello, World!");
 
             var server = new NetTcpServer(IPAddress.Any, 44370);
