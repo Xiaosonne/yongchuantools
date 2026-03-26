@@ -126,7 +126,8 @@ namespace YongChuanTools
                                 if (handlers != null)
                                     handlers.Where(s => s.type == EnumsAppType.上传消防系统状态).
                                          ToList().ForEach(s => s.handler(new IntPtr(state)));
-
+                                else if (zerolenhandler != null)
+                                    zerolenhandler(*body);
                                 break;
                             case EnumsAppType.上传消防部件状态:
 
@@ -135,13 +136,16 @@ namespace YongChuanTools
                                 if (handlers != null)
                                     handlers.Where(s => s.type == EnumsAppType.上传消防部件状态).
                                     ToList().ForEach(s => s.handler(new IntPtr(state2)));
-
+                                else if (zerolenhandler != null)
+                                    zerolenhandler(*body);
                                 break;
                             case EnumsAppType.上传消防部件模拟量:
                                 //URTEquipState2* state2 = (URTEquipState2*)start;
                                 //Console.WriteLine(state2->Print());
+                                zerolenhandler(*body);
                                 break;
                             default:
+                                zerolenhandler(*body);
                                 break;
                         }
                     }
