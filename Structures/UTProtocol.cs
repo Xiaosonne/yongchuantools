@@ -1,4 +1,5 @@
 ﻿using NetCoreServer;
+using Serilog;
 using System;
 using System.Linq;
 using System.Reflection.PortableExecutable;
@@ -108,40 +109,32 @@ namespace YongChuanTools
                 byte* start = (byte*)ptr1.ToPointer();
 
                 UTHeader* body = (UTHeader*)start;
-                Console.WriteLine(" body " + body->Print());
+                Log.Information("Decap: size={Size} cmd=0x{cmd:X2} length={Length} seq={Seq}", size, body->cmd, body->length, body->seq);
 
                 if (body->cmd == (byte)EnumCmdTypes.发送)
                 {
-                    int applen = body->length;
                     if (body->length > 0)
                     {
+                        // UTHeader actual protocol size is 23 bytes; Marshal.SizeOf may return 24 due to struct alignment padding
                         UTAppHeader* appheader = (UTAppHeader*)(start + Marshal.SizeOf<UTHeader>());
-                        Console.WriteLine("appheader " + appheader->Print());
-                        //todo 优化多条目信息
+                        Log.Information("Decap: appType={AppType} appCount={AppCount} headerSize={HS}", appheader->appType, appheader->appCount, Marshal.SizeOf<UTHeader>());
                         switch ((EnumsAppType)appheader->appType)
                         {
                             case EnumsAppType.上传消防系统状态:
-                                UTSysState* state = (UTSysState*)start;
-                                Console.WriteLine("上传消防系统状态############" + state->Print());
                                 if (handlers != null)
                                     handlers.Where(s => s.type == EnumsAppType.上传消防系统状态).
-                                         ToList().ForEach(s => s.handler(new IntPtr(state)));
+                                         ToList().ForEach(s => s.handler(new IntPtr(start)));
                                 else if (zerolenhandler != null)
                                     zerolenhandler(*body);
                                 break;
                             case EnumsAppType.上传消防部件状态:
-
-                                UTEquipState* state2 = (UTEquipState*)start;
-                                Console.WriteLine("上传消防部件状态############" + state2->Print());
                                 if (handlers != null)
                                     handlers.Where(s => s.type == EnumsAppType.上传消防部件状态).
-                                    ToList().ForEach(s => s.handler(new IntPtr(state2)));
+                                    ToList().ForEach(s => s.handler(new IntPtr(start)));
                                 else if (zerolenhandler != null)
                                     zerolenhandler(*body);
                                 break;
                             case EnumsAppType.上传消防部件模拟量:
-                                //URTEquipState2* state2 = (URTEquipState2*)start;
-                                //Console.WriteLine(state2->Print());
                                 zerolenhandler(*body);
                                 break;
                             default:
@@ -157,9 +150,9 @@ namespace YongChuanTools
 
                 }
             }
-            catch (Exception arg)
+            catch (Exception ex)
             {
-                Console.WriteLine($"OnReceived error {arg}");
+                Log.Error(ex, "OnReceived error");
             }
         }
         public static byte[] ReplyMessage(UTHeader header)

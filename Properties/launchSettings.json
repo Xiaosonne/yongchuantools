@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "YongChuanTools": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:13407;http://localhost:13408"
+    }
+  }
+}
