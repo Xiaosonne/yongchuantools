@@ -107,33 +107,9 @@ namespace YongChuanTools.Data
             }
         }
 
-        private string DecodeEquipState(ushort state)
-        {
-            // GB26875 设备状态: 0=正常, 1=报警, 2=故障, 3=离线等
-            return state switch
-            {
-                0 => "正常",
-                1 => "报警",
-                2 => "故障",
-                3 => "屏蔽",
-                4 => "正常(待确认)",
-                _ => $"未知({state})"
-            };
-        }
+        private string DecodeEquipState(ushort state) => UTProtocol.FormatEquipStateName(state);
 
-        private string DecodeSysState(ushort state)
-        {
-            // 系统状态
-            return state switch
-            {
-                0 => "正常",
-                1 => "报警",
-                2 => "主电故障",
-                3 => "备电故障",
-                4 => "总线故障",
-                _ => $"未知({state})"
-            };
-        }
+        private string DecodeSysState(ushort state) => UTProtocol.FormatSysStateName(state);
 
         private string GetDescription(UTEquipState state)
         {

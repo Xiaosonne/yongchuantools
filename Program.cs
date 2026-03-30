@@ -92,6 +92,7 @@ namespace YongChuanTools
                                 context.Response.StatusCode = 200;
                                 await context.Response.WriteAsJsonAsync(new { status = "ok", port = WebPort });
                             });
+                            endpoints.MapPost("/api/decode", DecodeEndpoint.Handle);
                         });
                     });
                 })

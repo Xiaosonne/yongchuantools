@@ -147,24 +147,9 @@ namespace YongChuanTools.Web
             }
         }
 
-        private string DecodeState(ushort state) => state switch
-        {
-            0 => "正常",
-            1 => "报警",
-            2 => "故障",
-            3 => "屏蔽",
-            _ => $"未知({state})"
-        };
+        private string DecodeState(ushort state) => UTProtocol.FormatEquipStateName(state);
 
-        private string DecodeSysState(ushort state) => state switch
-        {
-            0 => "正常",
-            1 => "报警",
-            2 => "主电故障",
-            3 => "备电故障",
-            4 => "总线故障",
-            _ => $"未知({state})"
-        };
+        private string DecodeSysState(ushort state) => UTProtocol.FormatSysStateName(state);
 
         public void Dispose()
         {
